@@ -21,39 +21,10 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json({ message: 'El archivo es muy grande. Máximo 10MB.' }, { status: 400 });
     }
 
-    // Step 1: Remove background via remove.bg API
-    const removeBgKey = process.env.REMOVEBG_API_KEY;
-    let finalFile: File | Blob = file;
-    let finalFilename = `covers/${Date.now()}-${file.name.replace(/\s+/g, '-').replace(/\.[^.]+$/, '')}.png`;
+    const filename = `covers/${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
 
-    if (removeBgKey) {
-      try {
-        const rbFormData = new FormData();
-        rbFormData.append('image_file', file);
-        rbFormData.append('size', 'preview');
-
-        const rbRes = await fetch('https://api.remove.bg/v1.0/removebg', {
-          method: 'POST',
-          headers: { 'X-Api-Key': removeBgKey },
-          body: rbFormData,
-        });
-
-        if (rbRes.ok) {
-          // remove.bg returns a transparent PNG binary
-          const transparentPng = await rbRes.arrayBuffer();
-          finalFile = new Blob([transparentPng], { type: 'image/png' });
-        } else {
-          const errText = await rbRes.text();
-          console.error('remove.bg error:', rbRes.status, errText);
-          // Fall through and upload original if remove.bg fails
-        }
-      } catch (rbErr) {
-        console.error('remove.bg fetch failed, uploading original:', rbErr);
-      }
-    }
-
-    // Step 2: Upload to Vercel Blob CDN
-    const blob = await put(finalFilename, finalFile, {
+    // Upload directly to Vercel Blob CDN
+    const blob = await put(filename, file, {
       access: 'public',
     });
 
