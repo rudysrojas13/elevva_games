@@ -35,6 +35,21 @@ export async function GET(request: Request) {
 
     const products = await prisma.product.findMany({
       where,
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        options: true,
+        category: true,
+        imageUrl: true,
+        stock: true,
+        active: true,
+        costUsd: true,
+        trm: true,
+        markupPercent: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       orderBy: { createdAt: 'desc' },
     });
 

@@ -6,6 +6,27 @@ async function isAdmin() {
   return true; // Bypass admin auth for local testing
 }
 
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const product = await prisma.product.findUnique({
+      where: { id },
+    });
+
+    if (!product) {
+      return NextResponse.json({ message: 'Producto no encontrado' }, { status: 404 });
+    }
+
+    return NextResponse.json(product);
+  } catch (error: any) {
+    console.error('Error al obtener producto:', error);
+    return NextResponse.json({ message: 'Error al obtener producto' }, { status: 500 });
+  }
+}
+
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }

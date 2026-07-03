@@ -81,6 +81,35 @@ export default function StorePage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedOptionIdx, setSelectedOptionIdx] = useState(0);
 
+  // Dynamic product description loading state
+  const [productDetail, setProductDetail] = useState<any | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+
+  useEffect(() => {
+    const activeId = selectedProductId || selectedProduct?.id;
+    if (!activeId) {
+      setProductDetail(null);
+      return;
+    }
+    if (productDetail && productDetail.id === activeId) return;
+
+    const fetchDetail = async () => {
+      setDetailLoading(true);
+      try {
+        const res = await fetch(`/api/products/${activeId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setProductDetail(data);
+        }
+      } catch (err) {
+        console.error('Error loading details:', err);
+      } finally {
+        setDetailLoading(false);
+      }
+    };
+    fetchDetail();
+  }, [selectedProductId, selectedProduct]);
+
   // Check auth session
   useEffect(() => {
     checkSession();
@@ -676,7 +705,16 @@ export default function StorePage() {
                           <span style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a' }}>{formatCOP(selectedProductForOrder.price)}</span>
                         </div>
                       </div>
-                      <p style={{ color: '#475569', fontSize: '13px', lineHeight: '1.5', margin: '10px 0' }}>{selectedProductForOrder.description}</p>
+                      {detailLoading ? (
+                        <p style={{ color: '#64748b', fontSize: '13px', fontStyle: 'italic', margin: '10px 0' }}>Cargando descripción...</p>
+                      ) : (
+                        <p 
+                          style={{ color: '#475569', fontSize: '13px', lineHeight: '1.5', margin: '10px 0' }}
+                          dangerouslySetInnerHTML={{ 
+                            __html: productDetail?.id === selectedProductId ? productDetail.description : 'Sin descripción disponible.' 
+                          }}
+                        />
+                      )}
                       
                       <div style={{ display: 'flex', gap: '16px', fontSize: '12px', marginTop: '14px', borderTop: '1px solid #e2e8f0', paddingTop: '10px' }}>
                         <span style={{ color: selectedProductForOrder.stock > 0 ? 'var(--accent-green)' : 'var(--accent-red)', fontWeight: 600 }}>
@@ -1443,7 +1481,11 @@ export default function StorePage() {
                     Descripción del Servicio
                   </div>
                   <div 
-                    dangerouslySetInnerHTML={{ __html: selectedProduct.description || 'Sin descripción disponible.' }}
+                    dangerouslySetInnerHTML={{ 
+                      __html: detailLoading 
+                        ? 'Cargando descripción...' 
+                        : (productDetail?.id === selectedProduct.id ? productDetail.description : 'Sin descripción disponible.') 
+                    }}
                     style={{
                       fontSize: '14px', color: '#475569', lineHeight: '1.6',
                       maxHeight: '300px', overflowY: 'auto', paddingRight: '10px'
