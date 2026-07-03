@@ -41,3 +41,6 @@ next-env.d.ts
 scripts/test-*.js
 scripts/inspect-*.js
 scripts/bulk-*.js
+
+.vercel
+.env*

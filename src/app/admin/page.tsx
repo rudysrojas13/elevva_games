@@ -234,14 +234,34 @@ export default function AdminPage() {
     });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setProductForm(prev => ({ ...prev, imageUrl: reader.result as string }));
-    };
-    reader.readAsDataURL(file);
+
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Error al subir');
+
+      setProductForm(prev => ({ ...prev, imageUrl: data.url }));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido';
+      alert('Error subiendo imagen: ' + message);
+    } finally {
+      setUploadingImage(false);
+      // Reset file input so same file can be re-selected
+      e.target.value = '';
+    }
   };
 
   const updateFormPrices = (newCostUsd: string, newTrm: string, newMarkupPercent: string, newPrice: string) => {
@@ -1685,23 +1705,28 @@ export default function AdminPage() {
                       <label
                         htmlFor="cover-file-input"
                         className="btn btn-secondary"
-                        style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '8px 16px', fontSize: '13px', margin: 0 }}
+                        style={{ cursor: uploadingImage ? 'not-allowed' : 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', justifyContent: 'center', padding: '8px 16px', fontSize: '13px', margin: 0, opacity: uploadingImage ? 0.7 : 1 }}
                       >
-                        Subir archivo local
+                        {uploadingImage ? (
+                          <>
+                            <span style={{ display: 'inline-block', width: '14px', height: '14px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
+                            Subiendo...
+                          </>
+                        ) : '📁 Subir desde PC'}
                       </label>
                       
                       <input
                         type="text"
                         required
-                        value={productForm.imageUrl.startsWith('data:') ? 'Imagen cargada localmente' : productForm.imageUrl}
-                        disabled={productForm.imageUrl.startsWith('data:')}
+                        value={uploadingImage ? 'Subiendo imagen...' : productForm.imageUrl}
+                        disabled={uploadingImage}
                         onChange={(e) => setProductForm({ ...productForm, imageUrl: e.target.value })}
                         placeholder="O ingresa URL (https://...)"
                         className="input-field"
                         style={{ flex: 1, margin: 0 }}
                       />
                       
-                      {productForm.imageUrl.startsWith('data:') && (
+                      {productForm.imageUrl && !uploadingImage && (
                         <button
                           type="button"
                           onClick={() => setProductForm({ ...productForm, imageUrl: '' })}
