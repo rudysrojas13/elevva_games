@@ -30,7 +30,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       try {
         const rbFormData = new FormData();
         rbFormData.append('image_file', file);
-        rbFormData.append('size', 'auto');
+        rbFormData.append('size', 'preview');
 
         const rbRes = await fetch('https://api.remove.bg/v1.0/removebg', {
           method: 'POST',
