@@ -1067,7 +1067,7 @@ export default function StorePage() {
                                 <img
                                   src={p.imageUrl}
                                   alt={p.name}
-                                  style={{ width: '100%', height: 'auto', display: 'block' }}
+                                  style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', display: 'block' }}
                                   onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
                                 />
                               ) : (
