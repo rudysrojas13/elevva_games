@@ -57,6 +57,9 @@ export default function AdminPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
+  const [productSearch, setProductSearch] = useState('');
+  const [productPage, setProductPage] = useState(1);
+  const PRODUCTS_PER_PAGE = 25;
 
   // Edit Product State
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
@@ -834,7 +837,29 @@ export default function AdminPage() {
 
             {dataLoading ? (
               <p style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>Cargando catálogo...</p>
-            ) : (
+            ) : (() => {
+              const filteredProds = products.filter(p =>
+                p.name.toLowerCase().includes(productSearch.toLowerCase()) ||
+                p.category.toLowerCase().includes(productSearch.toLowerCase())
+              );
+              const totalPages = Math.max(1, Math.ceil(filteredProds.length / PRODUCTS_PER_PAGE));
+              const paginated = filteredProds.slice((productPage - 1) * PRODUCTS_PER_PAGE, productPage * PRODUCTS_PER_PAGE);
+              return (
+              <>
+                {/* Search bar */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                  <input
+                    type="text"
+                    placeholder="🔍 Buscar por nombre o categoría..."
+                    value={productSearch}
+                    onChange={e => { setProductSearch(e.target.value); setProductPage(1); }}
+                    className="input-field"
+                    style={{ flex: 1, margin: 0 }}
+                  />
+                  <span style={{ fontSize: '13px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+                    {filteredProds.length} productos
+                  </span>
+                </div>
               <div className="admin-card" style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '700px' }}>
                   <thead>
@@ -853,7 +878,7 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {products.map((product) => {
+                    {paginated.map((product) => {
                       let opts: { label: string; price: number }[] = [];
                       if (product.options) {
                         try {
@@ -990,7 +1015,36 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               </div>
-            )}
+
+              {/* Controles de Paginación */}
+              {totalPages > 1 && (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', marginTop: '20px' }}>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setProductPage(p => Math.max(1, p - 1))}
+                    disabled={productPage === 1}
+                    style={{ padding: '8px 18px', opacity: productPage === 1 ? 0.4 : 1 }}
+                  >
+                    ← Anterior
+                  </button>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
+                    Página <strong style={{ color: 'white' }}>{productPage}</strong> de <strong style={{ color: 'white' }}>{totalPages}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setProductPage(p => Math.min(totalPages, p + 1))}
+                    disabled={productPage === totalPages}
+                    style={{ padding: '8px 18px', opacity: productPage === totalPages ? 0.4 : 1 }}
+                  >
+                    Siguiente →
+                  </button>
+                </div>
+              )}
+              </>
+              );
+            })()}
           </div>
         )}
 
