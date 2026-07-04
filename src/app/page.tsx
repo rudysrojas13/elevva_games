@@ -1085,74 +1085,139 @@ export default function StorePage() {
                             <span style={{ fontSize: '7px' }}>OFF</span>
                           </div>
 
-                          {/* Game Cover Image container - NO PADDING to let image's own padding merge */}
+                          {/* Game Cover Image container */}
                           <div style={{
-                            padding: '0',
+                            padding: '16px 0',
                             background: '#ffffff',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
+                            justifyContent: 'center',
                             position: 'relative',
-                            width: '100%'
+                            width: '100%',
+                            aspectRatio: '3/4',
                           }}>
-                            <div style={{
-                              width: '100%',
-                              position: 'relative',
-                              overflow: 'hidden',
-                            }}>
-                              {p.imageUrl ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                  src={p.imageUrl}
-                                  alt={p.name}
-                                  style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', display: 'block' }}
-                                  onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                                />
-                              ) : (
+                            {/* Determine if it's PS4 or PS5 */}
+                            {(p.category === 'PS4' || p.category === 'PS5') ? (
+                              <div style={{
+                                width: '82%',
+                                height: '92%',
+                                borderRadius: '4px',
+                                overflow: 'hidden',
+                                boxShadow: '0 10px 20px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1)',
+                                border: p.category === 'PS4' ? '2px solid #003791' : '2px solid #e2e8f0',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                background: '#090e21',
+                                position: 'relative',
+                              }}>
+                                {/* Case Header */}
                                 <div style={{
-                                  width: '100%',
-                                  aspectRatio: '3/4',
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  background: 'linear-gradient(135deg, #f1f5f9, #e2e8f0)',
-                                }}>
-                                  <div style={{ fontSize: '30px', marginBottom: '4px' }}>🎮</div>
-                                </div>
-                              )}
-
-                              {/* Stock badge overlay if out of stock */}
-                              {p.stock === 0 && (
-                                <div style={{
-                                  position: 'absolute',
-                                  inset: 0,
-                                  background: 'rgba(0,0,0,0.6)',
+                                  height: '22px',
+                                  background: p.category === 'PS4' ? '#003791' : '#ffffff',
+                                  color: p.category === 'PS4' ? '#ffffff' : '#000000',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
+                                  fontFamily: 'system-ui, -apple-system, sans-serif',
+                                  fontSize: '10px',
+                                  fontWeight: 900,
+                                  letterSpacing: '2px',
+                                  borderBottom: p.category === 'PS5' ? '2px solid #003791' : 'none',
+                                  userSelect: 'none',
+                                  flexShrink: 0,
                                 }}>
-                                  <span style={{
-                                    background: '#ef4444',
-                                    color: '#fff',
-                                    fontSize: '10px',
-                                    fontWeight: 800,
-                                    padding: '3px 10px',
-                                    borderRadius: '5px',
-                                    letterSpacing: '0.5px',
-                                  }}>AGOTADO</span>
+                                  {p.category}
                                 </div>
-                              )}
-                            </div>
+                                {/* Game Artwork */}
+                                <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+                                  {p.imageUrl ? (
+                                    <img
+                                      src={p.imageUrl}
+                                      alt={p.name}
+                                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                                      onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                    />
+                                  ) : (
+                                    <div style={{
+                                      width: '100%',
+                                      height: '100%',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      background: 'linear-gradient(135deg, #f1f5f9, #e2e8f0)',
+                                    }}>
+                                      <div style={{ fontSize: '24px' }}>🎮</div>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ) : (
+                              /* Standard render for Subscriptions or other categories */
+                              <div style={{
+                                width: '85%',
+                                height: '90%',
+                                borderRadius: '8px',
+                                overflow: 'hidden',
+                                boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                background: '#090e21',
+                                position: 'relative',
+                              }}>
+                                {p.imageUrl ? (
+                                  <img
+                                    src={p.imageUrl}
+                                    alt={p.name}
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                                    onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                  />
+                                ) : (
+                                  <div style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: 'linear-gradient(135deg, #f1f5f9, #e2e8f0)',
+                                  }}>
+                                    <div style={{ fontSize: '30px' }}>🎮</div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
 
-                            {/* Blue Divider Line stretching edge-to-edge */}
-                            <div style={{
-                              height: '4px',
-                              backgroundColor: '#004b87',
-                              width: '100%',
-                              marginTop: '0px',
-                            }} />
+                            {/* Stock badge overlay if out of stock */}
+                            {p.stock === 0 && (
+                              <div style={{
+                                position: 'absolute',
+                                inset: 0,
+                                background: 'rgba(0,0,0,0.5)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '12px 12px 0 0',
+                              }}>
+                                <span style={{
+                                  background: '#ef4444',
+                                  color: '#fff',
+                                  fontSize: '10px',
+                                  fontWeight: 800,
+                                  padding: '3px 10px',
+                                  borderRadius: '5px',
+                                  letterSpacing: '0.5px',
+                                }}>AGOTADO</span>
+                              </div>
+                            )}
                           </div>
+
+                          {/* Blue Divider Line stretching edge-to-edge */}
+                          <div style={{
+                            height: '4px',
+                            backgroundColor: '#004b87',
+                            width: '100%',
+                            marginTop: '0px',
+                          }} />
 
                           {/* Info & Pricing */}
                           <div style={{
