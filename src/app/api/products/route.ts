@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 async function isAdmin() {
   return true; // Bypass admin auth for local testing
 }
