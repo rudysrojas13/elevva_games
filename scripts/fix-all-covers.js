@@ -46,7 +46,18 @@ function getCleanBaseTitle(name) {
   title = title.replace(/[^a-z0-9]/g, ' ');
   title = title.replace(/\s+/g, ' ').trim();
   
-  return title;
+  // Strip leading and trailing common Spanish stopwords/prepositions
+  let words = title.split(' ');
+  const stopwords = ['de', 'desde', 'del', 'y', 'con', 'el', 'la', 'en', 'para', 'por', 'al'];
+  
+  while (words.length > 0 && stopwords.includes(words[0])) {
+    words.shift();
+  }
+  while (words.length > 0 && stopwords.includes(words[words.length - 1])) {
+    words.pop();
+  }
+  
+  return words.join(' ');
 }
 
 async function getSteamCover(cleanName) {
@@ -67,7 +78,7 @@ async function getSteamCover(cleanName) {
 
 async function getBingCover(cleanName) {
   try {
-    const query = `${cleanName} vertical poster`;
+    const query = `${cleanName} steam grid`;
     const url = `https://www.bing.com/images/search?q=${encodeURIComponent(query)}`;
     const res = await fetch(url, {
       headers: {
@@ -91,7 +102,7 @@ async function getBingCover(cleanName) {
 }
 
 async function main() {
-  console.log('=== Starting Clean Cover Art Curation ===');
+  console.log('=== Starting Clean Cover Art Curation (V3 - Steam Grid Curation) ===');
   
   const products = await prisma.product.findMany({
     where: {
@@ -133,7 +144,7 @@ async function main() {
     if (cleanCover) {
       console.log(`  --> Steam Cover Resolved: "${cleanCover}"`);
     } else {
-      console.log('  --> Steam not found, trying Bing vertical poster...');
+      console.log('  --> Steam not found, trying Bing steam grid...');
       cleanCover = await getBingCover(cleanName);
       if (cleanCover) {
         console.log(`  --> Bing Cover Resolved: "${cleanCover}"`);
