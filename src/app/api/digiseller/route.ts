@@ -83,6 +83,23 @@ export async function POST(request: Request) {
       return NextResponse.json(data);
     }
 
+    // ACTION 4: GET SELLER PRODUCTS
+    if (action === 'seller') {
+      const { sellerId: targetSellerId } = body;
+      if (!targetSellerId) {
+        return NextResponse.json({ message: 'Seller ID es requerido' }, { status: 400 });
+      }
+      console.log(`Buscando catálogo del vendedor ${targetSellerId} en Digiseller...`);
+      const response = await fetch(`https://api.digiseller.com/api/shop/products?seller_id=${targetSellerId}&rows=1000&currency=USD&lang=en-US`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+      const data = await response.json();
+      return NextResponse.json(data);
+    }
+
     return NextResponse.json({ message: 'Acción no soportada' }, { status: 400 });
   } catch (error: any) {
     console.error('Error en proxy de Digiseller:', error);
