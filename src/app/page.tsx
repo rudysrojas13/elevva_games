@@ -1261,48 +1261,50 @@ export default function StorePage() {
                               {p.name}
                             </div>
 
-                            {/* Provider ID / Link Identification */}
-                            <div style={{
-                               display: 'flex',
-                               alignItems: 'center',
-                               justifyContent: 'center',
-                               gap: '6px',
-                               marginBottom: '10px',
-                               marginTop: '-4px',
-                             }}>
-                               <span style={{
-                                 fontSize: '11px',
-                                 color: '#64748b',
-                                 fontWeight: 600,
-                                 fontFamily: 'monospace'
+                            {/* Provider ID / Link Identification - ONLY visible to ADMIN */}
+                            {user && user.role === 'admin' && (
+                              <div style={{
+                                 display: 'flex',
+                                 alignItems: 'center',
+                                 justifyContent: 'center',
+                                 gap: '6px',
+                                 marginBottom: '10px',
+                                 marginTop: '-4px',
                                }}>
-                                 ID: {p.id.split('-')[0]}
-                               </span>
-                               <a
-                                 href={`https://digiseller.market/info/goods.asp?id_g=${p.id.split('-')[0]}`}
-                                 target="_blank"
-                                 rel="noopener noreferrer"
-                                 style={{
-                                   display: 'inline-flex',
-                                   alignItems: 'center',
-                                   justifyContent: 'center',
-                                   width: '18px',
-                                   height: '18px',
-                                   borderRadius: '4px',
-                                   backgroundColor: '#f1f5f9',
-                                   color: '#004b87',
-                                   textDecoration: 'none',
+                                 <span style={{
                                    fontSize: '11px',
-                                   fontWeight: 'bold',
-                                   cursor: 'pointer',
-                                   transition: 'all 0.2s',
-                                   border: '1px solid #e2e8f0',
-                                 }}
-                                 title="Ver juego en Digiseller"
-                               >
-                                 ↗
-                               </a>
-                             </div>
+                                   color: '#64748b',
+                                   fontWeight: 600,
+                                   fontFamily: 'monospace'
+                                 }}>
+                                   ID: {p.id.split('-')[0]}
+                                 </span>
+                                 <a
+                                   href={`https://digiseller.market/info/goods.asp?id_g=${p.id.split('-')[0]}`}
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   style={{
+                                     display: 'inline-flex',
+                                     alignItems: 'center',
+                                     justifyContent: 'center',
+                                     width: '18px',
+                                     height: '18px',
+                                     borderRadius: '4px',
+                                     backgroundColor: '#f1f5f9',
+                                     color: '#004b87',
+                                     textDecoration: 'none',
+                                     fontSize: '11px',
+                                     fontWeight: 'bold',
+                                     cursor: 'pointer',
+                                     transition: 'all 0.2s',
+                                     border: '1px solid #e2e8f0',
+                                   }}
+                                   title="Ver juego en Digiseller"
+                                 >
+                                   ↗
+                                 </a>
+                               </div>
+                            )}
 
                             <div style={{
                               display: 'flex',
