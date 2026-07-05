@@ -86,7 +86,22 @@ function cleanProductName(name, consoleType) {
   cleanName = cleanName.replace(/Rent\s+\d+\s+days/gi, '');
   cleanName = cleanName.replace(/Rent/gi, '');
   cleanName = cleanName.trim().replace(/\s+/g, ' ');
-  return `${cleanName} (${consoleType}) | Alquiler`;
+  
+  const lowerName = cleanName.toLowerCase();
+  const isAccount = lowerName.includes('p1') || 
+                    lowerName.includes('p2') || 
+                    lowerName.includes('p3') || 
+                    lowerName.includes('activacion') || 
+                    lowerName.includes('activation') || 
+                    lowerName.includes('offline') || 
+                    lowerName.includes('sin conexion') || 
+                    lowerName.includes('sin conexión');
+                    
+  if (isAccount) {
+    return `${cleanName} (${consoleType}) | Cuenta Completa`;
+  } else {
+    return `${cleanName} (${consoleType}) | Alquiler`;
+  }
 }
 
 // Custom DNS lookup to query Digiseller .ru
