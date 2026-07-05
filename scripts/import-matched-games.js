@@ -4,24 +4,51 @@ const crypto = require('crypto');
 const fs = require('fs');
 
 function cleanTitleForImage(name) {
-  let title = name;
-  title = title.replace(/\(([^)]+)\)/g, '');
-  title = title.split(' (PS')[0].split(' | Alquiler')[0].split(' | P2')[0];
-  title = title.replace(/[💳⭐🔥⚡🔰🟢]/g, '');
+  let title = name.toLowerCase();
   
-  title = title.replace(/(Gold|Deluxe|Standard|Ultimate|Complete|Definitive|Legacy|GOTY|Game of the Year|Special|Legendary|Enhanced|Remastered|Remake|Eternal)\s+Edition/gi, '');
-  title = title.replace(/\b(Gold|Deluxe|Ultimate|Complete|Definitive|Remastered|Remake|Eternal|Collection)\b/gi, '');
+  // Remove accents
+  title = title.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   
-  title = title.replace(/Alquiler\s+\d+\s+días/gi, '');
-  title = title.replace(/Alquiler/gi, '');
-  title = title.replace(/Rent\s+\d+\s+days/gi, '');
-  title = title.replace(/Rent/gi, '');
+  // Remove console tags (with or without parentheses)
+  title = title.replace(/\(ps4\)/g, '').replace(/\(ps5\)/g, '');
+  title = title.replace(/ps4|ps5/g, '');
   
-  if (!/fifa|pes|nba/i.test(title)) {
-    title = title.replace(/\b20\d{2}\b/g, '');
-  }
-  title = title.replace(/-+/g, ' ');
-  return title.trim().replace(/\s+/g, ' ');
+  // Remove suffix indicators
+  title = title.replace(/\| alquiler/g, '');
+  title = title.replace(/\| cuenta completa/g, '');
+  title = title.replace(/\| p2\/p3/g, '');
+  title = title.replace(/\| p2-p3/g, '');
+  
+  // Remove emojis
+  title = title.replace(/[🎮💳⭐🔥⚡🔰🟢✨]/g, '');
+  
+  // Remove activation/rental phrases
+  title = title.replace(/alquiler\s+\d+\s+dias/g, '');
+  title = title.replace(/alquiler/g, '');
+  title = title.replace(/rent\s+\d+\s+days/g, '');
+  title = title.replace(/rent/g, '');
+  title = title.replace(/activacion/g, '');
+  title = title.replace(/activation/g, '');
+  title = title.replace(/sin conexion/g, '');
+  title = title.replace(/sin conexion/g, '');
+  title = title.replace(/sin conexión/g, '');
+  title = title.replace(/p1-sin conexion/g, '');
+  title = title.replace(/p1/g, '');
+  title = title.replace(/p2/g, '');
+  title = title.replace(/p3/g, '');
+  title = title.replace(/offline/g, '');
+  title = title.replace(/online/g, '');
+  title = title.replace(/en linea/g, '');
+  
+  // Remove numbers like 7 dias
+  title = title.replace(/\b\d+\s+dias\b/g, '');
+  title = title.replace(/\b7\s+dias\b/g, '');
+  
+  // Remove extra characters and clean spaces
+  title = title.replace(/[^a-z0-9]/g, ' ');
+  title = title.replace(/\s+/g, ' ').trim();
+  
+  return title;
 }
 
 // Translate logic
@@ -56,7 +83,7 @@ async function getSteamCover(cleanName) {
 
 async function getBingCover(cleanName, category) {
   try {
-    const query = `${cleanName} ${category || 'PS5'} cover`;
+    const query = `${cleanName} vertical poster`;
     const url = `https://www.bing.com/images/search?q=${encodeURIComponent(query)}`;
     const res = await fetch(url, {
       headers: {
