@@ -421,7 +421,7 @@ export default function StorePage() {
               <rect x="2" y="2" width="20" height="20" rx="5" strokeWidth="3"></rect>
               <circle cx="12" cy="12" r="5" strokeWidth="3"></circle>
             </svg>
-            <span>PLAYSTORE PANEL</span>
+            <span>ElevvaGames🎮</span>
           </div>
 
           <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px', textAlign: 'center', color: '#fff' }}>
@@ -547,7 +547,7 @@ export default function StorePage() {
               <rect x="2" y="2" width="20" height="20" rx="5" strokeWidth="3"></rect>
               <circle cx="12" cy="12" r="5" strokeWidth="3"></circle>
             </svg>
-            <span>PLAYSTORE PANEL</span>
+            <span>ElevvaGames🎮</span>
           </div>
 
           {/* Navigation Menu */}

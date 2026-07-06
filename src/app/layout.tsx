@@ -2,7 +2,7 @@ import './globals.css';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'PlayStore Digital - Juegos PS4, PS5 y Suscripciones',
+  title: 'ElevvaGames - Juegos PS4, PS5 y Suscripciones',
   description: 'Adquiere tus juegos digitales favoritos y suscripciones de PlayStation de forma rápida, segura y económica.',
 };
 
