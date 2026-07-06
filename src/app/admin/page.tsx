@@ -131,8 +131,20 @@ export default function AdminPage() {
   }, [mounted, isAuthenticated]);
 
   const checkAuth = async () => {
-    setIsAuthenticated(true);
-    setAuthLoading(false);
+    try {
+      setAuthLoading(true);
+      const res = await fetch('/api/auth');
+      const data = await res.json();
+      if (res.ok && data.authenticated && data.user && data.user.role === 'admin') {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch (err) {
+      setIsAuthenticated(false);
+    } finally {
+      setAuthLoading(false);
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {

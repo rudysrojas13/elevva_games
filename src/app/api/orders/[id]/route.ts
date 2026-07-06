@@ -3,7 +3,13 @@ import { cookies } from 'next/headers';
 import { prisma } from '@/lib/db';
 
 async function isAdmin() {
-  return true; // Bypass admin auth for local testing
+  const cookieStore = await cookies();
+  const session = cookieStore.get('user_session');
+  if (!session || !session.value) return false;
+  const user = await prisma.user.findUnique({
+    where: { id: session.value },
+  });
+  return user?.role === 'admin';
 }
 
 export async function PUT(

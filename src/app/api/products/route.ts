@@ -5,7 +5,13 @@ import { prisma } from '@/lib/db';
 export const dynamic = 'force-dynamic';
 
 async function isAdmin() {
-  return true; // Bypass admin auth for local testing
+  const cookieStore = await cookies();
+  const session = cookieStore.get('user_session');
+  if (!session || !session.value) return false;
+  const user = await prisma.user.findUnique({
+    where: { id: session.value },
+  });
+  return user?.role === 'admin';
 }
 
 export async function GET(request: Request) {
