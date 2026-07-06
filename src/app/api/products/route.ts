@@ -147,106 +147,156 @@ export async function POST(request: Request) {
       const imgUrl = p.preview_imgs && p.preview_imgs[0] ? p.preview_imgs[0].url : 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3';
 
       // Extract price options/variants (rental days, editions, etc.)
-      // Digiseller returns these in p.options (which has .variants) or p.rates array
-      let optionsJson = '[]';
-      let rawVariants: any[] = [];
+      const calculateModifierUsd = (modVal: number, modType: string) => {
+        if (modVal === 0) return 0;
+        if (modType === '%') return usdPrice * (modVal / 100);
+        if (modType === 'USD' || modType === '$' || modType === 'SUM') return modVal;
+        if (p.prices && p.prices.initial && p.prices.initial[modType] && p.prices.initial.USD) {
+          return modVal * (p.prices.initial.USD / p.prices.initial[modType]);
+        }
+        return modVal;
+      };
+
+      let baseTranslatedName = await translateEnToEs(p.name || 'Juego Importado');
+      baseTranslatedName = baseTranslatedName.replace(/\/?PS4\/?/ig, '').replace(/\/?PS5\/?/ig, '').replace(/\(\s*\)/g, '').replace(/\|\s*$/g, '').trim();
+
+      // Detect console option and version option
+      let consoleOption: any = null;
+      let versionOption: any = null;
       
-      if (p.rates && p.rates.length > 0) {
-        rawVariants = p.rates;
-      } else if (p.options && p.options.length > 0) {
-        // Find the first option that has variants (usually the pricing/days option)
-        const optWithVariants = p.options.find((o: any) => o.variants && o.variants.length > 0);
-        if (optWithVariants) {
-          rawVariants = optWithVariants.variants;
+      if (p.options && p.options.length > 0) {
+        for (const opt of p.options) {
+          if (!opt.variants || opt.variants.length === 0) continue;
+          const optLabel = (opt.label || opt.name || '').toLowerCase();
+          
+          const hasConsoleVariants = opt.variants.some((v: any) => {
+            const vText = (v.text || '').toLowerCase();
+            return vText.includes('ps4') || vText.includes('playstation 4') || vText.includes('ps5') || vText.includes('playstation 5');
+          });
+
+          if (hasConsoleVariants || optLabel.includes('console') || optLabel.includes('consola')) {
+            consoleOption = opt;
+          } else if (optLabel.includes('version') || optLabel.includes('versión') || opt.variants.some((v:any) => v.text && (v.text.includes('P2') || v.text.includes('P3')))) {
+            versionOption = opt;
+          } else if (!versionOption && !optLabel.includes('terms') && !optLabel.includes('rules')) {
+            versionOption = opt;
+          }
+        }
+      } else if (p.rates && p.rates.length > 0) {
+        versionOption = { variants: p.rates };
+      }
+
+      // Helper to save a single product combination
+      const saveProductCombo = async (
+        idSuffix: string, 
+        nameSuffix: string, 
+        catSuffix: string, 
+        cModUsd: number
+      ) => {
+        let parsedOpts: any[] = [];
+        if (versionOption && versionOption.variants) {
+          parsedOpts = await Promise.all(
+            versionOption.variants
+              .filter((v: any) => v.text || v.label || v.name || v.count_days)
+              .map(async (v: any) => {
+                let label = v.text || v.label || v.name || `${v.count_days || ''} días`;
+                label = await translateEnToEs(label);
+                
+                const vModVal = parseFloat(v.modify_value) || 0;
+                const vModType = v.modify_type ? v.modify_type.trim().toUpperCase() : '';
+                const vModUsd = calculateModifierUsd(vModVal, vModType);
+                
+                // Add both console modifier and version modifier
+                let variantPrice = usdPrice + cModUsd + vModUsd;
+                // Fallback to raw price if no modifiers exist
+                if (cModUsd === 0 && vModUsd === 0 && v.price) {
+                  variantPrice = parseFloat(v.price) + cModUsd;
+                }
+                
+                return {
+                  label,
+                  price: Math.ceil((variantPrice * rate * (1 + markup / 100)) / 1000),
+                  costUsd: variantPrice,
+                };
+              })
+          );
+        }
+
+        const optionsJson = parsedOpts.length > 0 ? JSON.stringify(parsedOpts) : '[]';
+        const finalId = idSuffix ? `${productId}-${idSuffix}` : productId.toString();
+        const finalName = nameSuffix ? `${baseTranslatedName} (${nameSuffix})` : baseTranslatedName;
+        let finalCategory = catSuffix || category || 'Suscripciones';
+        if (finalCategory === 'Auto' || !finalCategory || finalCategory === 'Suscripciones') {
+          const lowerName = (p.name || '').toLowerCase();
+          if (lowerName.includes('ps5') || lowerName.includes('playstation 5')) {
+            finalCategory = 'PS5';
+          } else if (lowerName.includes('ps4') || lowerName.includes('playstation 4')) {
+            finalCategory = 'PS4';
+          }
+        }
+
+        const existing = await prisma.product.findUnique({ where: { id: finalId } });
+        const data = {
+          name: finalName,
+          description: desc,
+          price: copPrice,
+          options: optionsJson,
+          category: finalCategory,
+          imageUrl: imgUrl,
+          stock: parseInt(stock) || 10,
+          active: active !== undefined ? active : true,
+          costUsd: usdPrice,
+          trm: rate,
+          markupPercent: markup,
+        };
+
+        if (existing) {
+          return await prisma.product.update({ where: { id: finalId }, data });
+        } else {
+          return await prisma.product.create({ data: { id: finalId, ...data } });
+        }
+      };
+
+      let createdProducts = [];
+
+      if (!consoleOption || !consoleOption.variants || consoleOption.variants.length === 0) {
+        // No console split, standard single import
+        const p1 = await saveProductCombo('', '', '', 0);
+        createdProducts.push(p1);
+      } else {
+        // Split by consoles!
+        for (const cVariant of consoleOption.variants) {
+          const cLabel = (cVariant.text || cVariant.name || 'Consola').toLowerCase();
+          // filter for playstation consoles
+          if (!cLabel.includes('ps4') && !cLabel.includes('ps5') && !cLabel.includes('playstation')) continue;
+          
+          let idSuffix = 'PS4';
+          let nameSuffix = 'PS4';
+          let catSuffix = 'PS4';
+          
+          if (cLabel.includes('ps5') || cLabel.includes('playstation 5')) {
+            idSuffix = 'PS5';
+            nameSuffix = 'PS5';
+            catSuffix = 'PS5';
+          }
+          
+          const cModVal = parseFloat(cVariant.modify_value) || 0;
+          const cModType = cVariant.modify_type ? cVariant.modify_type.trim().toUpperCase() : '';
+          const cModUsd = calculateModifierUsd(cModVal, cModType);
+
+          const pConsole = await saveProductCombo(idSuffix, nameSuffix, catSuffix, cModUsd);
+          createdProducts.push(pConsole);
+        }
+        
+        // If for some reason the variants were not playstation, fallback to default
+        if (createdProducts.length === 0) {
+          const pDefault = await saveProductCombo('', '', '', 0);
+          createdProducts.push(pDefault);
         }
       }
 
-      if (rawVariants.length > 0) {
-        const parsedOpts = await Promise.all(
-          rawVariants
-            .filter((v: any) => v.text || v.label || v.name || v.count_days)
-            .map(async (v: any) => {
-              let label = v.text || v.label || v.name || `${v.count_days || ''} días`;
-              label = await translateEnToEs(label);
-              
-              // Digiseller variants can modify the base price (modify_value and modify_type)
-              let variantPrice = usdPrice;
-              const modVal = parseFloat(v.modify_value) || 0;
-              const modType = v.modify_type ? v.modify_type.trim().toUpperCase() : '';
-
-              if (modVal !== 0) {
-                if (modType === '%') {
-                  variantPrice = usdPrice + (usdPrice * (modVal / 100));
-                } else if (modType === 'USD' || modType === '$' || modType === 'SUM') {
-                  variantPrice = usdPrice + modVal;
-                } else if (p.prices && p.prices.initial && p.prices.initial[modType] && p.prices.initial.USD) {
-                  // Convert modifier currency to USD using API ratios
-                  const modInUsd = modVal * (p.prices.initial.USD / p.prices.initial[modType]);
-                  variantPrice = usdPrice + modInUsd;
-                } else {
-                  variantPrice = usdPrice + modVal;
-                }
-              } else if (v.price) {
-                variantPrice = parseFloat(v.price);
-              }
-              
-              return {
-                label,
-                price: Math.ceil((variantPrice * rate * (1 + markup / 100)) / 1000),
-                costUsd: variantPrice,
-              };
-            })
-        );
-        if (parsedOpts.length > 0) optionsJson = JSON.stringify(parsedOpts);
-      }
-
-      const translatedName = await translateEnToEs(p.name || 'Juego Importado');
-
-      // Check if product already exists
-      const existing = await prisma.product.findUnique({
-        where: { id: productId.toString() }
-      });
-
-      let savedProduct;
-      if (existing) {
-        // Update it
-        savedProduct = await prisma.product.update({
-          where: { id: productId.toString() },
-          data: {
-            name: translatedName,
-            description: desc,
-            price: copPrice,
-            options: optionsJson,
-            category: category || 'Suscripciones',
-            imageUrl: imgUrl,
-            stock: parseInt(stock) || 10,
-            active: active !== undefined ? active : true,
-            costUsd: usdPrice,
-            trm: rate,
-            markupPercent: markup,
-          }
-        });
-      } else {
-        // Create it
-        savedProduct = await prisma.product.create({
-          data: {
-            id: productId.toString(),
-            name: translatedName,
-            description: desc,
-            price: copPrice,
-            options: optionsJson,
-            category: category || 'Suscripciones',
-            imageUrl: imgUrl,
-            stock: parseInt(stock) || 10,
-            active: active !== undefined ? active : true,
-            costUsd: usdPrice,
-            trm: rate,
-            markupPercent: markup,
-          }
-        });
-      }
-
-      return NextResponse.json(savedProduct);
+      // Return the list of products (or single product) so the frontend knows what was imported
+      return NextResponse.json(createdProducts.length === 1 ? createdProducts[0] : createdProducts);
     }
 
     // DEFAULT ACTION: MANUAL CREATE

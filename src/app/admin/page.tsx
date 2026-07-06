@@ -2095,7 +2095,7 @@ export default function AdminPage() {
                   />
                 </div>
 
-                <div>
+                <div style={{ display: 'none' }}>
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>
                     Categoría local
                   </label>
@@ -2105,9 +2105,7 @@ export default function AdminPage() {
                     className="input-field"
                     style={{ appearance: 'auto' }}
                   >
-                    <option value="PS5">PlayStation 5</option>
-                    <option value="PS4">PlayStation 4</option>
-                    <option value="Suscripciones">Suscripciones y Licencias</option>
+                    <option value="Auto">Automático</option>
                   </select>
                 </div>
 
