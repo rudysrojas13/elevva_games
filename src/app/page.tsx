@@ -538,26 +538,61 @@ export default function StorePage() {
         </defs>
       </svg>
 
-      {/* Top Navbar - Premium */}
-      <aside className="panel-sidebar">
-
-        {/* Top Row: Brand + User chip + Logout */}
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '10px 28px', borderBottom: '1px solid rgba(255,255,255,0.05)',
-          flexWrap: 'wrap', gap: '8px', minHeight: '52px',
-        }}>
-          {/* Brand */}
-          <div className="panel-brand">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="url(#cyan-blue-grad)" strokeWidth="2.5">
-              <rect x="2" y="2" width="20" height="20" rx="5"></rect>
-              <circle cx="12" cy="12" r="4"></circle>
+      {/* Top Navbar - Premium Header matching Admin */}
+      <header>
+        <div className="container nav-container">
+          {/* Brand Logo */}
+          <div className="logo" style={{ cursor: 'default', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#cyan-blue-grad)" strokeWidth="3">
+              <rect x="2" y="2" width="20" height="20" rx="5" strokeWidth="3"></rect>
+              <circle cx="12" cy="12" r="5" strokeWidth="3"></circle>
             </svg>
             <span>PLAYSTORE PANEL</span>
           </div>
 
-          {/* User chip + Logout */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Navigation Menu */}
+          <ul className="nav-menu">
+            <li>
+              <button 
+                onClick={() => setActiveTab('new-order')} 
+                className={`nav-link ${activeTab === 'new-order' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+              >
+                Nuevo Pedido
+              </button>
+            </li>
+            <li>
+              <button 
+                onClick={() => setActiveTab('orders')} 
+                className={`nav-link ${activeTab === 'orders' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+              >
+                Mis Pedidos
+              </button>
+            </li>
+            <li>
+              <button 
+                onClick={() => setActiveTab('services')} 
+                className={`nav-link ${activeTab === 'services' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+              >
+                Servicios
+              </button>
+            </li>
+            <li>
+              <button 
+                onClick={() => setActiveTab('add-funds')} 
+                className={`nav-link ${activeTab === 'add-funds' ? 'active' : ''}`}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+              >
+                Cargar Saldo
+              </button>
+            </li>
+          </ul>
+
+          {/* Actions (User balance + Logout) */}
+          <div className="nav-actions">
+            {/* User chip */}
             <div style={{
               display: 'flex', alignItems: 'center', gap: '10px',
               background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
@@ -572,62 +607,31 @@ export default function StorePage() {
               }}>
                 {user.name.charAt(0).toUpperCase()}
               </div>
-              <div>
+              <div style={{ textAlign: 'left' }}>
                 <div style={{ fontSize: '9px', color: 'rgba(255, 255, 255, 0.6)', textTransform: 'uppercase', letterSpacing: '0.8px', lineHeight: 1 }}>Revendedor</div>
                 <div style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.95)', marginTop: '2px', lineHeight: 1 }}>{user.name}</div>
               </div>
-              <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.15)' }} />
-              <div>
+              <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.15)', margin: '0 4px' }} />
+              <div style={{ textAlign: 'left' }}>
                 <div style={{ fontSize: '9px', color: 'rgba(255, 255, 255, 0.6)', textTransform: 'uppercase', letterSpacing: '0.8px', lineHeight: 1 }}>Saldo</div>
                 <div style={{ fontSize: '12px', fontWeight: 700, color: '#00f0ff', marginTop: '2px', lineHeight: 1 }}>{formatCOP(user.balance)}</div>
               </div>
             </div>
+
+            {/* Logout button */}
             <button
               onClick={handleLogout}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '5px',
-                background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.18)',
-                borderRadius: '7px', padding: '5px 11px',
-                color: 'rgba(239,68,68,0.75)', fontSize: '11px', fontWeight: 500,
-                cursor: 'pointer', transition: 'all 0.2s ease', letterSpacing: '0.2px',
-              }}
+              className="btn btn-secondary"
+              style={{ fontSize: '13px', padding: '8px 16px' }}
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                <polyline points="16 17 21 12 16 7"></polyline>
-                <line x1="21" y1="12" x2="9" y2="12"></line>
-              </svg>
-              <span>Salir</span>
+              Cerrar Sesión
             </button>
           </div>
         </div>
+      </header>
 
-        {/* Navigation Tabs */}
-        <nav style={{
-          display: 'flex', flexDirection: 'row',
-          padding: '0 20px', gap: '0',
-          overflowX: 'auto', scrollbarWidth: 'none',
-        }}>
-          {([
-            { id: 'new-order', label: 'Nuevo Pedido', icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> },
-            { id: 'orders',    label: 'Mis Pedidos',  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg> },
-            { id: 'services',  label: 'Servicios',    icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line></svg> },
-            { id: 'add-funds', label: 'Cargar Saldo', icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg> },
-          ] as { id: string; label: string; icon: React.ReactNode }[]).map(tab => (
-            <button
-              key={tab.id}
-              className={`panel-nav-btn${activeTab === tab.id ? ' active' : ''}`}
-              onClick={() => setActiveTab(tab.id as typeof activeTab)}
-            >
-              {tab.icon}
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </nav>
-      </aside>
-
-      {/* Main Workspace Area */}
-      <main className="panel-content">
+      {/* Main Workspace Area matching Admin */}
+      <main className="container" style={{ padding: '40px 24px 80px 24px' }}>
         
         {/* TAB 1: NUEVO PEDIDO */}
         {activeTab === 'new-order' && (
