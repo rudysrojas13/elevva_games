@@ -719,5 +719,20 @@ footer {
   color: var(--text-primary) !important;
 }
 
+/* Responsive login rules */
+@media (max-width: 1024px) {
+  .login-showcase {
+    display: none !important;
+  }
+  .login-mobile-brand {
+    display: flex !important;
+  }
+}
+@media (max-width: 640px) {
+  .login-benefits-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 
 

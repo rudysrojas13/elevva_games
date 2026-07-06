@@ -386,140 +386,341 @@ export default function StorePage() {
   // LOGIN / REGISTRATION VIEW
   if (!user) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '100vh', 
-        padding: '20px',
+      <div style={{
+        display: 'flex',
+        minHeight: '100vh',
+        backgroundColor: '#070b19',
+        position: 'relative',
+        overflow: 'hidden',
+        fontFamily: "'Inter', sans-serif"
       }}>
+        {/* Absolute Background Glows */}
         <div style={{
+          position: 'absolute',
+          top: '-10%',
+          left: '-10%',
+          width: '50vw',
+          height: '50vw',
+          background: 'radial-gradient(circle, rgba(0, 240, 255, 0.08) 0%, transparent 70%)',
+          pointerEvents: 'none',
+          zIndex: 1
+        }} />
+        <div style={{
+          position: 'absolute',
+          bottom: '-10%',
+          right: '-10%',
+          width: '50vw',
+          height: '50vw',
+          background: 'radial-gradient(circle, rgba(0, 114, 206, 0.12) 0%, transparent 70%)',
+          pointerEvents: 'none',
+          zIndex: 1
+        }} />
+
+        <div style={{
+          display: 'flex',
           width: '100%',
-          maxWidth: '450px',
-          backgroundColor: 'rgba(13, 21, 45, 0.7)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid var(--border-color)',
-          borderRadius: '20px',
-          padding: '40px 30px',
-          boxShadow: 'var(--shadow-lg)'
+          zIndex: 2,
+          flexDirection: 'row',
+          flexWrap: 'wrap'
         }}>
-          {/* Brand */}
-          <div style={{ 
-            fontSize: '24px', 
-            fontWeight: 800, 
-            textAlign: 'center', 
-            marginBottom: '30px',
-            background: 'linear-gradient(135deg, var(--accent-cyan), var(--ps-blue))',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+          
+          {/* LEFT SIDE: Brand & Reseller Benefits */}
+          <div className="login-showcase" style={{
+            flex: '1 1 500px',
             display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'center',
-            alignItems: 'center',
-            gap: '8px'
+            padding: '60px 80px',
+            borderRight: '1px solid rgba(255,255,255,0.04)',
+            background: 'linear-gradient(180deg, rgba(7, 11, 25, 0.8) 0%, rgba(13, 21, 45, 0.4) 100%)',
+            boxSizing: 'border-box'
           }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#cyan-blue-grad)" strokeWidth="3">
-              <rect x="2" y="2" width="20" height="20" rx="5" strokeWidth="3"></rect>
-              <circle cx="12" cy="12" r="5" strokeWidth="3"></circle>
-            </svg>
-            <span>ElevvaGames🎮</span>
+            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+              {/* Brand Logo */}
+              <div style={{ 
+                fontSize: '32px', 
+                fontWeight: 900, 
+                marginBottom: '20px',
+                background: 'linear-gradient(135deg, #00f0ff, #0072ce)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                letterSpacing: '0.05em'
+              }}>
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="url(#cyan-blue-grad)" strokeWidth="3">
+                  <rect x="2" y="2" width="20" height="20" rx="5" strokeWidth="3"></rect>
+                  <circle cx="12" cy="12" r="5" strokeWidth="3"></circle>
+                </svg>
+                <span>ElevvaGames🎮</span>
+              </div>
+
+              <h1 style={{ 
+                fontSize: '28px', 
+                fontWeight: 800, 
+                color: 'white', 
+                lineHeight: '1.3', 
+                marginBottom: '20px',
+                letterSpacing: '-0.5px'
+              }}>
+                El panel de distribución mayorista líder para revendedores de videojuegos
+              </h1>
+              
+              <p style={{ 
+                color: 'var(--text-secondary)', 
+                fontSize: '15px', 
+                lineHeight: '1.6', 
+                marginBottom: '40px' 
+              }}>
+                Únete a nuestra red oficial de distribuidores y obtén acceso instantáneo a nuestro amplio catálogo de juegos de PS4, PS5 y suscripciones con entrega automatizada.
+              </p>
+
+              {/* Benefits List */}
+              <div className="login-benefits-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+                
+                {/* Benefit 1 */}
+                <div style={{ display: 'flex', gap: '14px' }}>
+                  <div style={{
+                    width: '42px', height: '42px', borderRadius: '10px',
+                    background: 'rgba(0, 240, 255, 0.1)', border: '1px solid rgba(0, 240, 255, 0.2)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                  }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" strokeWidth="2.5">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 style={{ color: 'white', fontSize: '15px', fontWeight: 700, marginBottom: '6px' }}>Entrega Inmediata</h4>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.5' }}>
+                      Nuestro sistema automatizado procesa y entrega tus credenciales al instante.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Benefit 2 */}
+                <div style={{ display: 'flex', gap: '14px' }}>
+                  <div style={{
+                    width: '42px', height: '42px', borderRadius: '10px',
+                    background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                  }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 style={{ color: 'white', fontSize: '15px', fontWeight: 700, marginBottom: '6px' }}>Soporte Personalizado</h4>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.5' }}>
+                      Atención al cliente directa e inmediata a través de WhatsApp.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Benefit 3 */}
+                <div style={{ display: 'flex', gap: '14px' }}>
+                  <div style={{
+                    width: '42px', height: '42px', borderRadius: '10px',
+                    background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.2)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                  }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5">
+                      <line x1="12" y1="1" x2="12" y2="23"></line>
+                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 style={{ color: 'white', fontSize: '15px', fontWeight: 700, marginBottom: '6px' }}>Mejores Precios</h4>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.5' }}>
+                      Tarifas de distribuidor exclusivas con altos márgenes de ganancia para tu negocio.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Benefit 4 */}
+                <div style={{ display: 'flex', gap: '14px' }}>
+                  <div style={{
+                    width: '42px', height: '42px', borderRadius: '10px',
+                    background: 'rgba(168, 85, 247, 0.1)', border: '1px solid rgba(168, 85, 247, 0.2)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                  }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2.5">
+                      <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
+                      <path d="M12 12h.01"></path>
+                      <path d="M17 12h.01"></path>
+                      <path d="M7 12h.01"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 style={{ color: 'white', fontSize: '15px', fontWeight: 700, marginBottom: '6px' }}>Alquiler de Juegos</h4>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.5' }}>
+                      Catálogo exclusivo con opción de alquiler por 7 días o más para tus clientes.
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
           </div>
 
-          <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px', textAlign: 'center', color: '#fff' }}>
-            {authMode === 'login' ? 'Iniciar Sesión en el Panel' : 'Registrarse como Revendedor'}
-          </h2>
-
-          {authError && (
-            <div style={{ 
-              backgroundColor: 'rgba(239, 68, 68, 0.1)', 
-              border: '1px solid rgba(239, 68, 68, 0.2)', 
-              color: 'var(--accent-red)', 
-              padding: '12px', 
-              borderRadius: '8px', 
-              fontSize: '13px', 
-              marginBottom: '20px',
-              textAlign: 'center'
+          {/* RIGHT SIDE: Interactive Login/Register Form */}
+          <div style={{
+            flex: '1 1 450px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '40px 20px',
+            boxSizing: 'border-box'
+          }}>
+            <div style={{
+              width: '100%',
+              maxWidth: '440px',
+              backgroundColor: 'rgba(13, 21, 45, 0.45)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '24px',
+              padding: '40px 32px',
+              boxShadow: 'var(--shadow-lg)',
+              boxSizing: 'border-box'
             }}>
-              {authError}
-            </div>
-          )}
+              
+              {/* Small Logo for Mobile */}
+              <div className="login-mobile-brand" style={{ 
+                fontSize: '22px', 
+                fontWeight: 900, 
+                textAlign: 'center', 
+                marginBottom: '28px',
+                background: 'linear-gradient(135deg, var(--accent-cyan), var(--ps-blue))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                display: 'none',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#cyan-blue-grad)" strokeWidth="3">
+                  <rect x="2" y="2" width="20" height="20" rx="5" strokeWidth="3"></rect>
+                  <circle cx="12" cy="12" r="5" strokeWidth="3"></circle>
+                </svg>
+                <span>ElevvaGames🎮</span>
+              </div>
 
-          <form onSubmit={handleAuthSubmit}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
-              {authMode === 'register' && (
-                <div>
-                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: 600 }}>Nombre Completo</label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Ej. Juan Gómez"
-                    className="input-field"
-                    style={{ width: '100%' }}
-                  />
+              <h2 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '8px', textAlign: 'left', color: '#fff', letterSpacing: '-0.5px' }}>
+                {authMode === 'login' ? 'Bienvenido de nuevo' : 'Crea tu cuenta'}
+              </h2>
+              
+              <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '28px' }}>
+                {authMode === 'login' 
+                  ? 'Ingresa tus credenciales para acceder al panel de revendedores.' 
+                  : 'Registra tus datos para unirte como distribuidor oficial.'}
+              </p>
+
+              {authError && (
+                <div style={{ 
+                  backgroundColor: 'rgba(239, 68, 68, 0.08)', 
+                  border: '1px solid rgba(239, 68, 68, 0.2)', 
+                  color: 'var(--accent-red)', 
+                  padding: '12px 16px', 
+                  borderRadius: '10px', 
+                  fontSize: '13px', 
+                  marginBottom: '24px',
+                  lineHeight: '1.4'
+                }}>
+                  {authError}
                 </div>
               )}
 
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: 600 }}>Correo Electrónico</label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="ejemplo@correo.com"
-                  className="input-field"
-                  style={{ width: '100%' }}
-                />
-              </div>
+              <form onSubmit={handleAuthSubmit}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', marginBottom: '28px' }}>
+                  {authMode === 'register' && (
+                    <div>
+                      <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px', fontWeight: 600 }}>Nombre Completo</label>
+                      <input
+                        type="text"
+                        required
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Juan Gómez"
+                        className="input-field"
+                        style={{ width: '100%', height: '46px', fontSize: '14px' }}
+                      />
+                    </div>
+                  )}
 
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: 600 }}>Contraseña</label>
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="input-field"
-                  style={{ width: '100%' }}
-                />
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px', fontWeight: 600 }}>Correo Electrónico</label>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="correo@ejemplo.com"
+                      className="input-field"
+                      style={{ width: '100%', height: '46px', fontSize: '14px' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px', fontWeight: 600 }}>Contraseña</label>
+                    <input
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="input-field"
+                      style={{ width: '100%', height: '46px', fontSize: '14px' }}
+                    />
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={authSubmitting}
+                  className="btn btn-primary" 
+                  style={{ 
+                    width: '100%', 
+                    height: '48px',
+                    borderRadius: '12px', 
+                    fontSize: '15px', 
+                    fontWeight: 700,
+                    background: 'linear-gradient(135deg, var(--ps-blue) 0%, var(--accent-cyan) 100%)',
+                    border: 'none',
+                    boxShadow: '0 4px 20px rgba(0, 114, 206, 0.35)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {authSubmitting ? 'Procesando...' : authMode === 'login' ? 'Entrar al Panel ⚡' : 'Comenzar Ahora 🚀'}
+                </button>
+              </form>
+
+              <div style={{ textAlign: 'center', marginTop: '28px', fontSize: '13px', color: 'var(--text-secondary)' }}>
+                {authMode === 'login' ? (
+                  <>
+                    ¿No tienes cuenta de revendedor?{' '}
+                    <button 
+                      onClick={() => setAuthMode('register')} 
+                      style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontWeight: 700, padding: 0 }}
+                    >
+                      Regístrate aquí
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    ¿Ya eres revendedor?{' '}
+                    <button 
+                      onClick={() => setAuthMode('login')} 
+                      style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontWeight: 700, padding: 0 }}
+                    >
+                      Inicia sesión
+                    </button>
+                  </>
+                )}
               </div>
             </div>
-
-            <button 
-              type="submit" 
-              disabled={authSubmitting}
-              className="btn btn-primary" 
-              style={{ width: '100%', padding: '14px', borderRadius: '10px', fontSize: '15px', fontWeight: 700 }}
-            >
-              {authSubmitting ? 'Procesando...' : authMode === 'login' ? 'Entrar al Panel' : 'Registrar Cuenta'}
-            </button>
-          </form>
-
-          <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '13px', color: 'var(--text-secondary)' }}>
-            {authMode === 'login' ? (
-              <>
-                ¿No tienes cuenta de revendedor?{' '}
-                <button 
-                  onClick={() => setAuthMode('register')} 
-                  style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontWeight: 600, padding: 0 }}
-                >
-                  Regístrate aquí
-                </button>
-              </>
-            ) : (
-              <>
-                ¿Ya eres revendedor?{' '}
-                <button 
-                  onClick={() => setAuthMode('login')} 
-                  style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontWeight: 600, padding: 0 }}
-                >
-                  Inicia sesión
-                </button>
-              </>
-            )}
           </div>
+
         </div>
       </div>
     );
