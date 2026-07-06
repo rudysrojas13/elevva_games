@@ -1211,6 +1211,25 @@ export default function StorePage() {
               return matchCat && matchSearch;
             })
             .sort((a, b) => {
+              // Priority products (shown first)
+              const getPriorityScore = (product: typeof a) => {
+                const nameLower = product.name.toLowerCase();
+                if (product.id === '5409724' || nameLower.includes('fc 26') || nameLower.includes('fifa 26') || nameLower.includes('fifa26')) return 0;
+                if (product.id === '4637360-PS5' || nameLower.includes('activación de astro bot p3 (ps5)')) return 1;
+                if (product.id === '5553598' || (nameLower.includes('battlefield') && nameLower.includes('p2/p3'))) return 2;
+                if (product.id === '5216451' || nameLower.includes('gran turismo™ 7 ps4™ ps5 p3')) return 3;
+                if (product.id === '5346653' || (nameLower.includes('demon slayer') && nameLower.includes('p3'))) return 4;
+                if (product.id === '5597353' || (nameLower.includes('arc raiders') && nameLower.includes('p2/p3'))) return 5;
+                return 999;
+              };
+
+              const scoreA = getPriorityScore(a);
+              const scoreB = getPriorityScore(b);
+
+              if (scoreA !== scoreB) {
+                return scoreA - scoreB;
+              }
+
               if (svcSort === 'az') return a.name.localeCompare(b.name);
               if (svcSort === 'price-asc') return a.price - b.price;
               if (svcSort === 'price-desc') return b.price - a.price;
