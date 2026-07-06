@@ -1432,7 +1432,7 @@ export default function StorePage() {
 
         {/* TAB 4: CARGAR SALDO */}
         {activeTab === 'add-funds' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
+          <div style={{ maxWidth: '650px', margin: '0 auto' }}>
             {/* Real Load Instructions */}
             <div className="panel-card">
               <h2 className="panel-title">
@@ -1461,63 +1461,6 @@ export default function StorePage() {
                   </p>
                 </div>
               </div>
-            </div>
-
-            {/* Simulated Load (Sandbox testing) */}
-            <div className="panel-card" style={{ border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-              <h2 className="panel-title" style={{ color: 'var(--accent-green)' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" strokeWidth="3">
-                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                </svg>
-                Simulador de Saldo (Pruebas)
-              </h2>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '24px' }}>
-                Utiliza esta sección para añadir saldo ficticio de forma instantánea y probar la compra y flujo completo del panel.
-              </p>
-
-              {depositMessage && (
-                <div style={{ 
-                  backgroundColor: depositMessage.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
-                  border: depositMessage.type === 'success' ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(239, 68, 68, 0.2)', 
-                  color: depositMessage.type === 'success' ? 'var(--accent-green)' : 'var(--accent-red)', 
-                  padding: '12px', 
-                  borderRadius: '8px', 
-                  fontSize: '13px', 
-                  marginBottom: '20px'
-                }}>
-                  {depositMessage.text}
-                </div>
-              )}
-
-              <form onSubmit={handleSimulatedDeposit}>
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Monto de Recarga (Escala COP)</label>
-                  <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: '16px', top: '12px', fontWeight: 'bold', fontSize: '16px', color: 'white' }}>$</span>
-                    <input
-                      type="number"
-                      required
-                      value={depositAmount}
-                      onChange={(e) => setDepositAmount(e.target.value)}
-                      placeholder="Monto a recargar (Ej: 100 para $100.000)"
-                      className="input-field"
-                      style={{ width: '100%', paddingLeft: '32px' }}
-                    />
-                  </div>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginTop: '6px' }}>
-                    Nota: Ingresar "100" añadirá $100.000 COP ficticios a tu cuenta.
-                  </span>
-                </div>
-
-                <button 
-                  type="submit" 
-                  disabled={depositSubmitting}
-                  className="btn btn-primary"
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', fontSize: '14px', fontWeight: 700, backgroundColor: 'var(--accent-green)', borderColor: 'var(--accent-green)' }}
-                >
-                  {depositSubmitting ? 'Procesando...' : 'Cargar Saldo Simulado'}
-                </button>
-              </form>
             </div>
           </div>
         )}
