@@ -47,6 +47,12 @@ model Order {
   total       Float
   status      String   @default("Pendiente") // "Pendiente", "Completado", "Cancelado"
   credentials String   @default("") // ej: "correo@gmail.com:clave123 | Instrucciones: ..."
+  
+  // Reseller Metadata
+  clientName  String   @default("")
+  clientPrice Float    @default(0.0)
+  clientNotes String   @default("")
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
