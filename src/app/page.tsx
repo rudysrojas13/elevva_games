@@ -989,13 +989,23 @@ export default function StorePage() {
         {/* TAB 3: SERVICIOS — Catálogo con filtros */}
         {activeTab === 'services' && (() => {
           const catColor: Record<string, string> = {
-            PS5: '#00aaff', PS4: '#a855f7', Xbox: '#22c55e',
-            Suscripciones: '#f59e0b', PC: '#ef4444',
+            Todos: '#0072ce',
+            Alquiler: '#10b981',
+            PS5: '#00aaff', 
+            PS4: '#a855f7', 
+            Xbox: '#22c55e',
+            Suscripciones: '#f59e0b', 
+            PC: '#ef4444',
           };
-          const cats = ['Todos', ...Array.from(new Set(products.map(p => p.category)))];
+          const cats = ['Todos', 'Alquiler', ...Array.from(new Set(products.map(p => p.category)))];
           const filtered = products
             .filter(p => {
-              const matchCat = svcCat === 'Todos' || p.category === svcCat;
+              let matchCat = true;
+              if (svcCat === 'Alquiler') {
+                matchCat = p.name.toLowerCase().includes('alquiler');
+              } else if (svcCat !== 'Todos') {
+                matchCat = p.category === svcCat;
+              }
               const matchSearch = p.name.toLowerCase().includes(svcSearch.toLowerCase());
               return matchCat && matchSearch;
             })
@@ -1089,7 +1099,9 @@ export default function StorePage() {
                             borderRadius: '10px', padding: '1px 6px',
                             minWidth: '20px', textAlign: 'center',
                           }}>
-                            {cat === 'Todos' ? products.length : products.filter(p => p.category === cat).length}
+                            {cat === 'Todos' ? products.length : 
+                             cat === 'Alquiler' ? products.filter(p => p.name.toLowerCase().includes('alquiler')).length :
+                             products.filter(p => p.category === cat).length}
                           </span>
                         </button>
                       ))}
