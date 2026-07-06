@@ -34,8 +34,8 @@ export async function PUT(
       return NextResponse.json({ message: 'Pedido no encontrado' }, { status: 404 });
     }
 
-    // Only the order owner can edit reseller metadata
-    if (order.userId !== user.id) {
+    // Only the order owner or admin can edit reseller metadata
+    if (order.userId !== user.id && user.role !== 'admin') {
       return NextResponse.json({ message: 'No autorizado' }, { status: 403 });
     }
 

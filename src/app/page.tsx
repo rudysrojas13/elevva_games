@@ -357,9 +357,13 @@ export default function StorePage() {
       if (res.ok) {
         await fetchOrders();
         setEditingResellerOrder(null);
+      } else {
+        const errorData = await res.json();
+        alert(`Error al guardar: ${errorData.message || 'Error desconocido'}`);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error al guardar datos de la venta minorista:', err);
+      alert(`Error al guardar: ${err.message || 'Error de conexión'}`);
     } finally {
       setResellerSaving(false);
     }
@@ -619,15 +623,6 @@ export default function StorePage() {
               <span>{tab.label}</span>
             </button>
           ))}
-          {user.role === 'admin' && (
-            <a href="/admin" className="panel-nav-btn" style={{ textDecoration: 'none' }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-              </svg>
-              <span>Administración</span>
-            </a>
-          )}
         </nav>
       </aside>
 
@@ -1392,51 +1387,6 @@ export default function StorePage() {
                             }}>
                               {p.name}
                             </div>
-
-                            {/* Provider ID / Link Identification - ONLY visible to ADMIN */}
-                            {user && user.role === 'admin' && (
-                              <div style={{
-                                 display: 'flex',
-                                 alignItems: 'center',
-                                 justifyContent: 'center',
-                                 gap: '6px',
-                                 marginBottom: '10px',
-                                 marginTop: '-4px',
-                               }}>
-                                 <span style={{
-                                   fontSize: '11px',
-                                   color: '#64748b',
-                                   fontWeight: 600,
-                                   fontFamily: 'monospace'
-                                 }}>
-                                   ID: {p.id.split('-')[0]}
-                                 </span>
-                                 <a
-                                   href={`https://digiseller.market/info/goods.asp?id_g=${p.id.split('-')[0]}`}
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   style={{
-                                     display: 'inline-flex',
-                                     alignItems: 'center',
-                                     justifyContent: 'center',
-                                     width: '18px',
-                                     height: '18px',
-                                     borderRadius: '4px',
-                                     backgroundColor: '#f1f5f9',
-                                     color: '#004b87',
-                                     textDecoration: 'none',
-                                     fontSize: '11px',
-                                     fontWeight: 'bold',
-                                     cursor: 'pointer',
-                                     transition: 'all 0.2s',
-                                     border: '1px solid #e2e8f0',
-                                   }}
-                                   title="Ver juego en Digiseller"
-                                 >
-                                   ↗
-                                 </a>
-                               </div>
-                            )}
 
                             <div style={{
                               display: 'flex',
