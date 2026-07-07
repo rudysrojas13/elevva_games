@@ -10,9 +10,11 @@
     "seed": "node scripts/seed.js"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.13.5",
     "@vercel/blob": "^2.5.0",
     "bcryptjs": "^2.4.3",
     "duck-duck-scrape": "^2.2.7",
+    "google-auth-library": "^10.9.0",
     "next": "^15.0.3",
     "react": "^19.0.0-rc-66855b96-20241106",
     "react-dom": "^19.0.0-rc-66855b96-20241106"

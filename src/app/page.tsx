@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 interface User {
   id: string;
@@ -144,6 +145,28 @@ export default function StorePage() {
       console.error('Error verificando sesión:', err);
     } finally {
       setAuthLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setAuthSubmitting(true);
+    setAuthError('');
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential: credentialResponse.credential }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setUser(data.user);
+      } else {
+        setAuthError(data.message || 'Error al autenticar con Google');
+      }
+    } catch (error) {
+      setAuthError('Error de red al conectar con Google');
+    } finally {
+      setAuthSubmitting(false);
     }
   };
 
@@ -386,6 +409,7 @@ export default function StorePage() {
   // LOGIN / REGISTRATION VIEW
   if (!user) {
     return (
+      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
       <div style={{
         display: 'flex',
         minHeight: '100vh',
@@ -695,6 +719,25 @@ export default function StorePage() {
                 </button>
               </form>
 
+              <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0' }}>
+                <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }}></div>
+                <span style={{ padding: '0 12px', fontSize: '13px', color: 'var(--text-secondary)' }}>o</span>
+                <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }}></div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => setAuthError('La autenticación con Google falló')}
+                  useOneTap
+                  theme="filled_black"
+                  shape="rectangular"
+                  size="large"
+                  text={authMode === 'login' ? "signin_with" : "signup_with"}
+                  width="100%"
+                />
+              </div>
+
               <div style={{ textAlign: 'center', marginTop: '28px', fontSize: '13px', color: 'var(--text-secondary)' }}>
                 {authMode === 'login' ? (
                   <>
@@ -723,6 +766,7 @@ export default function StorePage() {
 
         </div>
       </div>
+      </GoogleOAuthProvider>
     );
   }
 
